@@ -1,0 +1,70 @@
+                           Core Go bindings for SysDB
+                          ============================
+
+  The core Go bindings for SysDB are a set of packages for the Go programming
+  language providing core functionality to interact with SysDB.
+
+What is SysDB?
+--------------
+
+  “System DataBase” (SysDB) is a multi-backend system management and inventory
+  collection service. It stores system and inventory information about
+  hardware and software systems. This information is (continuously) collected
+  from various configurable backends (inventory services, monitoring services,
+  etc.) and stored in a graph-like hierarchy of generic objects. The store may
+  be queried through a generic interface independent of the active backends.
+  Object names are canonicalized before they are added to the store to ensure
+  a consistent view of your infrastructure.
+
+  The central object type is a host, which generally represents a physical or
+  virtual machine or any other type of physical resource. Hosts, in turn, may
+  reference a list of services which represent any kind of logical resource
+  like a software system. Both, hosts and services, may reference a list of
+  attributes which represent further information about the respective host or
+  service object. For example, attributes may specify static information like
+  a host's architecture or the software version. A host may also reference a
+  list of metrics which are references to performance data stored about the
+  host. SysDB supports querying the respective time-series from a backend's
+  data store.
+
+  SysDB is free and open source software, licensed under the 2-clause BSD
+  license. See COPYING for details. Changes between all SysDB releases can be
+  found in the file ReleaseNotes.
+
+  <https://sysdb.io/>
+
+Install the Go bindings
+-----------------------
+
+  Installing all of the packages provided by this project is as easy as
+  running the following command:
+
+    go get github.com/sysdb/go/...
+
+  This will download and install the packages and all of their dependencies
+  into GOPATH. See ‘go help get’ for more details. See below for a list of all
+  packages and their descriptions.
+
+Packages
+--------
+
+  * github.com/sysdb/go/client: A SysDB client implementation.
+
+  * github.com/sysdb/go/proto: Helper functions for using the SysDB front-end
+    protocol. That's the protocol used for communication between a client and
+    a SysDB server instance.
+
+Getting Help
+------------
+
+  Various channels for asynchronous and real-time communication with
+  developers and users are available. See <https://sysdb.io/contact/> for
+  details about the mailing list, IRC channel, and social media.
+
+Author
+------
+
+  Sebastian “tokkee” Harl <sh@tokkee.org>
+
+  Want to contribute? Check out the website <https://sysdb.io> for details.
+
