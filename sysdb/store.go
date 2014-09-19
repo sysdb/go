@@ -245,9 +245,9 @@ type DataPoint struct {
 
 // A Timeseries describes a sequence of data-points.
 type Timeseries struct {
-	Start Time `json:"start"`
-	End   Time `json:"end"`
-	Data  map[string][]DataPoint
+	Start Time                   `json:"start"`
+	End   Time                   `json:"end"`
+	Data  map[string][]DataPoint `json:"data"`
 }
 
 // vim: set tw=78 sw=4 sw=4 noexpandtab :
