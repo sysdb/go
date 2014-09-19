@@ -87,13 +87,14 @@ type Message struct {
 	Raw  []byte
 }
 
-// Decodes reads a raw message encoded in the SysDB wire format from r. The
-// raw body of the message will still be encoded in the wire format.
+// Read reads a raw message encoded in the SysDB wire format from r. The
+// function parses the header but the raw body of the message will still be
+// encoded in the wire format.
 //
 // The reader has to be in blocking mode. Otherwise, the client and server
 // will be out of sync after reading a partial message and cannot recover from
 // that.
-func Decode(r io.Reader) (*Message, error) {
+func Read(r io.Reader) (*Message, error) {
 	var header [8]byte
 	if _, err := io.ReadFull(r, header[:]); err != nil {
 		return nil, err
@@ -109,13 +110,13 @@ func Decode(r io.Reader) (*Message, error) {
 	return &Message{Status(typ), msg}, nil
 }
 
-// Encode writes a raw message to w. The raw body of m has to be encoded in
-// the SysDB wire format.
+// Write writes a raw message to w. The raw body of m has to be encoded in the
+// SysDB wire format. The function adds the right header to the message.
 //
 // The writer has to be in blocking mode. Otherwise, the client and server
 // will be out of sync after writing a partial message and cannot recover from
 // that.
-func Encode(w io.Writer, m *Message) error {
+func Write(w io.Writer, m *Message) error {
 	var header [8]byte
 	nbo.PutUint32(header[:4], uint32(m.Type))
 	nbo.PutUint32(header[4:], uint32(len(m.Raw)))

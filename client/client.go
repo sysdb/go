@@ -120,22 +120,22 @@ func Connect(addr, user string) (*Conn, error) {
 // Any blocked Send or Receive operations will be unblocked and return errors.
 func (c Conn) Close() { c.c.Close() }
 
-// Send encodes the specified message and sends it to the server.
+// Send sends the specified raw message to the server.
 //
 // Send operations block until the full message could be written to the
 // underlying sockets. This ensures that server and client don't get out of
 // sync.
 func (c Conn) Send(m *proto.Message) error {
-	return proto.Encode(c.c, m)
+	return proto.Write(c.c, m)
 }
 
-// Receive waits for a reply from the server and returns the decoded message.
+// Receive waits for a reply from the server and returns the raw message.
 //
 // Receive operations block until a full message could be read from the
 // underlying socket. This ensures that server and client don't get out of
 // sync.
 func (c Conn) Receive() (*proto.Message, error) {
-	return proto.Decode(c.c)
+	return proto.Read(c.c)
 }
 
 // vim: set tw=78 sw=4 sw=4 noexpandtab :
