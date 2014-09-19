@@ -240,7 +240,7 @@ type Host struct {
 // A DataPoint describes a datum at a certain point of time.
 type DataPoint struct {
 	Timestamp Time    `json:"timestamp"`
-	Value     float64 `json:"value"`
+	Value     float64 `json:"value,string"`
 }
 
 // A Timeseries describes a sequence of data-points.
