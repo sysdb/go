@@ -205,6 +205,7 @@ type Attribute struct {
 	Value          string   `json:"value"`
 	LastUpdate     Time     `json:"last_update"`
 	UpdateInterval Duration `json:"update_interval"`
+	Backends       []string `json:"backends"`
 }
 
 // A Metric describes a metric known to SysDB.
@@ -212,6 +213,7 @@ type Metric struct {
 	Name           string      `json:"name"`
 	LastUpdate     Time        `json:"last_update"`
 	UpdateInterval Duration    `json:"update_interval"`
+	Backends       []string    `json:"backends"`
 	Attributes     []Attribute `json:"attributes"`
 }
 
@@ -220,6 +222,7 @@ type Service struct {
 	Name           string      `json:"name"`
 	LastUpdate     Time        `json:"last_update"`
 	UpdateInterval Duration    `json:"update_interval"`
+	Backends       []string    `json:"backends"`
 	Attributes     []Attribute `json:"attributes"`
 }
 
@@ -228,6 +231,7 @@ type Host struct {
 	Name           string      `json:"name"`
 	LastUpdate     Time        `json:"last_update"`
 	UpdateInterval Duration    `json:"update_interval"`
+	Backends       []string    `json:"backends"`
 	Attributes     []Attribute `json:"attributes"`
 	Metrics        []Metric    `json:"metrics"`
 	Services       []Service   `json:"services"`
