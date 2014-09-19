@@ -1,8 +1,8 @@
-                           Core Go bindings for SysDB
-                          ============================
+                      Core Go language bindings for SysDB
+                     =====================================
 
-  The core Go bindings for SysDB are a set of packages for the Go programming
-  language providing core functionality to interact with SysDB.
+  The core Go language bindings for SysDB are a set of packages for the Go
+  programming language providing core functionality to interact with SysDB.
 
 What is SysDB?
 --------------
