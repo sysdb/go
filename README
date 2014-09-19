@@ -54,6 +54,9 @@ Packages
     protocol. That's the protocol used for communication between a client and
     a SysDB server instance.
 
+  * github.com/sysdb/go/sysdb: Core constants and types used by SysDB
+    packages.
+
 Getting Help
 ------------
 
