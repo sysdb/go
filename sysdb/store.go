@@ -40,6 +40,9 @@ const jsonTime = `"2006-01-02 15:04:05 -0700"`
 // sequence of decimal numbers with a unit suffix).
 type Duration time.Duration
 
+// Common durations. All values greater than or equal to a day are not exact
+// values but subject to daylight savings time changes, leap years, etc. They
+// are available mostly for providing human readable display formats.
 const (
 	Second = Duration(1000000000)
 	Minute = 60 * Second
@@ -49,8 +52,8 @@ const (
 	Year   = Duration(3652425 * 24 * 60 * 60 * 100000)
 )
 
-// MarshalJSON implements the json.Marshaler interface. The time is a quoted
-// string in the SysDB JSON format.
+// MarshalJSON implements the json.Marshaler interface. The duration is a
+// quoted string in the SysDB JSON format.
 func (d Duration) MarshalJSON() ([]byte, error) {
 	if d == 0 {
 		return []byte(`"0s"`), nil
@@ -177,6 +180,8 @@ func (d Duration) String() string { return time.Duration(d).String() }
 // (YYYY-MM-DD hh:mm:ss +-zzzz).
 type Time time.Time
 
+// MarshalJSON implements the json.Marshaler interface. The time is a quoted
+// string in the SysDB JSON format.
 func (t Time) MarshalJSON() ([]byte, error) {
 	return []byte(time.Time(t).Format(jsonTime)), nil
 }

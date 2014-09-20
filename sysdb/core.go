@@ -29,8 +29,8 @@ package sysdb
 // The LogPriority describes the priority of a log message.
 type LogPriority int
 
+// Log priorities supported by SysDB.
 const (
-	// Log priorities supported by SysDB.
 	LogEmerg   = LogPriority(0)
 	LogErr     = LogPriority(3)
 	LogWarning = LogPriority(4)
