@@ -57,6 +57,13 @@ Packages
   * github.com/sysdb/go/sysdb: Core constants and types used by SysDB
     packages.
 
+Documentation
+-------------
+
+  The documentation for all Go packages is included with the source code in a
+  way compatible with the godoc tool. As such, it can be viewed and browsed
+  online at <https://godoc.org/github.com/sysdb/go>.
+
 Getting Help
 ------------
 
