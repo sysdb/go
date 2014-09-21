@@ -30,6 +30,8 @@ package proto
 
 import (
 	"encoding/binary"
+	"encoding/json"
+	"fmt"
 	"io"
 )
 
@@ -81,6 +83,18 @@ const (
 	ConnectionExpr = Status(100)
 )
 
+// The DataType describes the type of data in a ConnectionData message.
+type DataType int
+
+const (
+	// A HostList can be unmarshaled to []sysdb.Host.
+	HostList DataType = iota
+	// A Host can be unmarshaled to sysdb.Host.
+	Host
+	// A Timeseries can be unmarshaled to sysdb.Timeseries.
+	Timeseries
+)
+
 // A Message represents a raw message of the SysDB front-end protocol.
 type Message struct {
 	Type Status
@@ -128,6 +142,38 @@ func Write(w io.Writer, m *Message) error {
 		return err
 	}
 	return nil
+}
+
+// DataType determines the type of data in a ConnectionData message.
+func (m Message) DataType() (DataType, error) {
+	if m.Type != ConnectionData {
+		return 0, fmt.Errorf("message is not of type DATA")
+	}
+
+	typ := nbo.Uint32(m.Raw[:4])
+	switch Status(typ) {
+	case ConnectionList, ConnectionLookup:
+		return HostList, nil
+	case ConnectionFetch:
+		return Host, nil
+	case ConnectionTimeseries:
+		return Timeseries, nil
+	}
+	return 0, fmt.Errorf("unknown DATA type %d", typ)
+}
+
+// Unmarshal parses the raw body of m and stores the result in the value
+// pointed to by v which has to match the type of the message and its data.
+func Unmarshal(m *Message, v interface{}) error {
+	if m.Type != ConnectionData {
+		return fmt.Errorf("unmarshaling message of type %d not supported", m.Type)
+	}
+	if len(m.Raw) == 0 { // empty command
+		return nil
+	} else if len(m.Raw) < 4 {
+		return fmt.Errorf("DATA message body too short")
+	}
+	return json.Unmarshal(m.Raw[4:], v)
 }
 
 // vim: set tw=78 sw=4 sw=4 noexpandtab :
