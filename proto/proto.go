@@ -79,8 +79,10 @@ const (
 	// 'TIMESERIES' command in the server.
 	ConnectionTimeseries = Status(7)
 
-	// ConnectionExpr is the internal state for expression parsing.
-	ConnectionExpr = Status(100)
+	// ConnectionMatcher is the internal state for parsing matchers.
+	ConnectionMatcher = Status(100)
+	// ConnectionExpr is the internal state for parsing expressions.
+	ConnectionExpr = Status(101)
 )
 
 // The DataType describes the type of data in a ConnectionData message.
