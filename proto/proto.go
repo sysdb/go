@@ -33,6 +33,7 @@ import (
 	"encoding/json"
 	"fmt"
 	"io"
+	"strings"
 )
 
 // Network byte order.
@@ -176,6 +177,14 @@ func Unmarshal(m *Message, v interface{}) error {
 		return fmt.Errorf("DATA message body too short")
 	}
 	return json.Unmarshal(m.Raw[4:], v)
+}
+
+// EscapeString returns the quoted and escaped string s suitable for use
+// in a query.
+func EscapeString(s string) string {
+	// Currently, the server only handles double-quotes.
+	// Backslashes do not serve any special purpose.
+	return "'" + strings.Replace(s, "'", "''", -1) + "'"
 }
 
 // vim: set tw=78 sw=4 sw=4 noexpandtab :
