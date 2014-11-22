@@ -216,6 +216,7 @@ type Attribute struct {
 // A Metric describes a metric known to SysDB.
 type Metric struct {
 	Name           string      `json:"name"`
+	Timeseries     bool        `json:"timeseries"`
 	LastUpdate     Time        `json:"last_update"`
 	UpdateInterval Duration    `json:"update_interval"`
 	Backends       []string    `json:"backends"`
