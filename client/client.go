@@ -71,7 +71,39 @@ import (
 // messages, the communication with the server will usually happen
 // sequentially.
 type Conn struct {
-	c net.Conn
+	c                   net.Conn
+	network, addr, user string
+}
+
+func (c *Conn) connect() (err error) {
+	if c.c, err = net.Dial(c.network, c.addr); err != nil {
+		return err
+	}
+	defer func() {
+		if err != nil {
+			c.Close()
+		}
+	}()
+
+	m := &proto.Message{
+		Type: proto.ConnectionStartup,
+		Raw:  []byte(c.user),
+	}
+	if err := c.Send(m); err != nil {
+		return err
+	}
+
+	m, err = c.Receive()
+	if err != nil {
+		return err
+	}
+	if m.Type == proto.ConnectionError {
+		return fmt.Errorf("failed to startup session: %s", string(m.Raw))
+	}
+	if m.Type != proto.ConnectionOK {
+		return fmt.Errorf("failed to startup session: unsupported")
+	}
+	return nil
 }
 
 // Connect sets up a client connection to a SysDB server instance at the
@@ -88,29 +120,9 @@ func Connect(addr, user string) (*Conn, error) {
 		network = "unix"
 	}
 
-	c := &Conn{}
-	var err error
-	if c.c, err = net.Dial(network, addr); err != nil {
+	c := &Conn{network: network, addr: addr, user: user}
+	if err := c.connect(); err != nil {
 		return nil, err
-	}
-
-	m := &proto.Message{
-		Type: proto.ConnectionStartup,
-		Raw:  []byte(user),
-	}
-	if err := c.Send(m); err != nil {
-		return nil, err
-	}
-
-	m, err = c.Receive()
-	if err != nil {
-		return nil, err
-	}
-	if m.Type == proto.ConnectionError {
-		return nil, fmt.Errorf("failed to startup session: %s", string(m.Raw))
-	}
-	if m.Type != proto.ConnectionOK {
-		return nil, fmt.Errorf("failed to startup session: unsupported")
 	}
 	return c, nil
 }
@@ -118,15 +130,36 @@ func Connect(addr, user string) (*Conn, error) {
 // Close closes the client connection.
 //
 // Any blocked Send or Receive operations will be unblocked and return errors.
-func (c Conn) Close() { c.c.Close() }
+func (c *Conn) Close() {
+	if c.c == nil {
+		return
+	}
+	c.c.Close()
+	c.c = nil
+}
 
 // Send sends the specified raw message to the server.
 //
 // Send operations block until the full message could be written to the
 // underlying sockets. This ensures that server and client don't get out of
 // sync.
-func (c Conn) Send(m *proto.Message) error {
-	return proto.Write(c.c, m)
+func (c *Conn) Send(m *proto.Message) error {
+	var err error
+	if c.c != nil {
+		err = proto.Write(c.c, m)
+		if err == nil {
+			return nil
+		}
+		c.Close()
+	}
+
+	// Try to reconnect.
+	if e := c.connect(); e == nil {
+		return proto.Write(c.c, m)
+	} else if err == nil {
+		err = e
+	}
+	return err
 }
 
 // Receive waits for a reply from the server and returns the raw message.
@@ -134,8 +167,24 @@ func (c Conn) Send(m *proto.Message) error {
 // Receive operations block until a full message could be read from the
 // underlying socket. This ensures that server and client don't get out of
 // sync.
-func (c Conn) Receive() (*proto.Message, error) {
-	return proto.Read(c.c)
+func (c *Conn) Receive() (*proto.Message, error) {
+	var err error
+	if c.c != nil {
+		var m *proto.Message
+		m, err = proto.Read(c.c)
+		if err == nil {
+			return m, err
+		}
+		c.Close()
+	}
+
+	// Try to reconnect.
+	if e := c.connect(); e == nil {
+		return proto.Read(c.c)
+	} else if err == nil {
+		err = e
+	}
+	return nil, err
 }
 
 // vim: set tw=78 sw=4 sw=4 noexpandtab :
