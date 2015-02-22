@@ -57,6 +57,7 @@ server:
 package client
 
 import (
+	"encoding/binary"
 	"fmt"
 	"net"
 	"strings"
@@ -185,6 +186,33 @@ func (c *Conn) Receive() (*proto.Message, error) {
 		err = e
 	}
 	return nil, err
+}
+
+// ServerVersion queries and returns the version of the remote server.
+func (c *Conn) ServerVersion() (major, minor, patch int, extra string, err error) {
+	m := &proto.Message{Type: proto.ConnectionServerVersion}
+	if err = c.Send(m); err != nil {
+		return 0, 0, 0, "", err
+	}
+
+	m, err = c.Receive()
+	if err != nil || m.Type != proto.ConnectionOK {
+		if err == nil {
+			err = fmt.Errorf("SERVER_VERSION command failed with status %d", m.Type)
+		}
+		return 0, 0, 0, "", err
+	}
+	if len(m.Raw) < 4 {
+		return 0, 0, 0, "", fmt.Errorf("SERVER_VERSION reply is too short")
+	}
+	version := int(binary.BigEndian.Uint32(m.Raw[:4]))
+	major = version / 10000
+	minor = version/100 - 100*major
+	patch = version - 10000*major - 100*minor
+	if len(m.Raw) > 4 {
+		extra = string(m.Raw[4:])
+	}
+	return major, minor, patch, extra, nil
 }
 
 // vim: set tw=78 sw=4 sw=4 noexpandtab :

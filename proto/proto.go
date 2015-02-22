@@ -84,6 +84,9 @@ const (
 	ConnectionMatcher = Status(100)
 	// ConnectionExpr is the internal state for parsing expressions.
 	ConnectionExpr = Status(101)
+
+	// ConnectionServerVersion is the state requesting the server version.
+	ConnectionServerVersion = Status(1000)
 )
 
 // The DataType describes the type of data in a ConnectionData message.
