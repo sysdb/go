@@ -50,6 +50,25 @@ or:
 	}
 	fmt.Printf("%v\n", res)
 
+or execute queries:
+
+	q, err := client.QueryString("FETCH %s %s", client.Identifier(typ), name)
+	if err != nil {
+		// handle error
+	}
+	res, err := c.Query(q)
+	if err != nil {
+		// handle error
+	}
+
+	// res is one of the object types defined in the sysdb package.
+	switch typ {
+	case "host":
+		host := res.(*sysdb.Host)
+		// do something
+		// ...
+	}
+
 Each client maintains multiple connections to a SysDB server allowing to
 handle multiple requests in parallel. The SysDB server is able to handle that
 easily making it a cheap approach. The low-level Dial function creates a
