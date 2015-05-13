@@ -66,7 +66,7 @@ func stringify(values ...interface{}) ([]interface{}, error) {
 // string. Let's just assume that this pattern never occurs in a real query
 // string (or else, users will have to work around this by not using
 // QueryString()).
-var badArgRE = regexp.MustCompile(`%!.?\(.+`)
+var badArgRE = regexp.MustCompile(`%!?[A-Za-z]?\(.+`)
 
 // QueryString formats a query string. The query q may include printf string
 // verbs (%s) for each argument. The arguments may be of type Identifier,

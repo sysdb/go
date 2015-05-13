@@ -175,6 +175,9 @@ func (c *Client) Call(req *proto.Message) (*proto.Message, error) {
 			log.Println(string(res.Raw[4:]))
 		}
 	}
+
+	// Not reached; needed for Go1 compatibility.
+	return nil, nil
 }
 
 // ServerVersion queries and returns the version of the remote server.
