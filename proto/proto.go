@@ -80,6 +80,16 @@ const (
 	// 'TIMESERIES' command in the server.
 	ConnectionTimeseries = Status(7)
 
+	// ConnectionStore is the state requesting the execution of the 'STORE'
+	// command in the server.
+	ConnectionStore = Status(50)
+
+	// Object-specific STORE commands.
+	ConnectionStoreHost      = Status(51)
+	ConnectionStoreService   = Status(52)
+	ConnectionStoreMetric    = Status(53)
+	ConnectionStoreAttribute = Status(54)
+
 	// ConnectionMatcher is the internal state for parsing matchers.
 	ConnectionMatcher = Status(100)
 	// ConnectionExpr is the internal state for parsing expressions.
